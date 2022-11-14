@@ -1,0 +1,73 @@
+pipeline {
+    agent any
+    stages {
+        stage('Calculate Git Hash'){
+            steps {
+                script {
+                    BUILD_TAG = sh (
+                        script: 'git rev-parse --short HEAD', returnStdout: true).trim()
+                    IS_TEST_ENABLED = sh(script: 'jq .test.enabled .pipelines/pipeline.json', returnStdout: true).toBoolean()
+                    GIT_BRANCH_NAME = sh(script: 'echo $GIT_BRANCH', returnStdout: true).trim()
+                    env.BUILD_TAG = BUILD_TAG
+                    env.IS_TEST_ENABLED = IS_TEST_ENABLED
+                    env.GIT_BRANCH_NAME = GIT_BRANCH_NAME
+                }
+            }
+        }
+        stage('Custom') {
+            script {
+                print('hello world')
+            }
+        }
+        stage('Set Build Details'){
+             steps {
+                script {
+                    currentBuild.displayName = "${BUILD_TAG}"
+                    currentBuild.description = "${BUILD_TAG}"
+                }
+            }
+         }
+        stage('Build') {
+            steps {
+                sh ''' 
+                    chmod +x -R .pipelines/stages
+                    .pipelines/stages/build.sh
+                '''
+            }
+        }
+        stage('Test'){
+            steps {
+                sh '.pipelines/stages/test.sh'
+            }
+        }
+        stage('Code Coverage & Publish Reports'){
+            steps {
+                script {
+                    if(IS_TEST_ENABLED) {
+                        sh '.pipelines/stages/coverage.sh'
+                        junit 'unit_tests.xml'
+                        publishCoverage adapters: [coberturaReportAdapter('coverage.xml')]
+                    }
+                }
+            }
+        }
+        stage('Push'){
+           when {
+                environment(name: "GIT_BRANCH_NAME", value: "origin/master")
+            }
+            steps {
+                sh '.pipelines/stages/push.sh'
+            }
+        }
+     }
+     post {
+        always {
+            cleanWs(cleanWhenNotBuilt: false,
+                    deleteDirs: true,
+                    disableDeferredWipeout: true,
+                    notFailBuild: true,
+                    patterns: [[pattern: '.gitignore', type: 'INCLUDE'],
+                                [pattern: '.propsfile', type: 'EXCLUDE']])
+        }
+    }
+}

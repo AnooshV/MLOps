@@ -1,0 +1,17 @@
+{
+    "application": {
+      "name": "av-mlops-tutorial",
+      "type": "python"
+    },
+    "build": {
+      "path": "",
+      "outputPath": ""
+    },
+    "test": {
+      "enabled": true
+    },
+    "archive": {
+      "registry": "artifactory-upstream.corp.olacabs.com:6001",
+      "repository": "av-mlops-tutorial"
+    }
+  }
