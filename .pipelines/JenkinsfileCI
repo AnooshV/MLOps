@@ -30,38 +30,9 @@ pipeline {
                 }
             }
          }
-        stage('Build') {
-            steps {
-                sh ''' 
-                    chmod +x -R .pipelines/stages
-                    .pipelines/stages/build.sh
-                '''
-            }
-        }
-        stage('Test'){
-            steps {
-                sh '.pipelines/stages/test.sh'
-            }
-        }
-        stage('Code Coverage & Publish Reports'){
-            steps {
-                script {
-                    if(IS_TEST_ENABLED) {
-                        sh '.pipelines/stages/coverage.sh'
-                        junit 'unit_tests.xml'
-                        publishCoverage adapters: [coberturaReportAdapter('coverage.xml')]
-                    }
-                }
-            }
-        }
-        stage('Push'){
-           when {
-                environment(name: "GIT_BRANCH_NAME", value: "origin/master")
-            }
-            steps {
-                sh '.pipelines/stages/push.sh'
-            }
-        }
+        
+    
+        
      }
      post {
         always {
