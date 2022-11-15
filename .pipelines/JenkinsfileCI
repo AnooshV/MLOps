@@ -15,8 +15,11 @@ pipeline {
             }
         }
         stage('Custom') {
-            script {
-                print('hello world')
+            steps {
+
+                script {
+                    print('hello world')
+                }
             }
         }
         stage('Set Build Details'){
