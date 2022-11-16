@@ -10,7 +10,7 @@ ignore =
     E226,
     E305,
     W,
-    D,
+    D,a
     F,
     N,
     C,

@@ -5,19 +5,6 @@ pipeline {
 	    }
     }
     stages {
-        stage('Calculate Git Hash'){
-            steps {
-                script {
-                    BUILD_TAG = sh (
-                        script: 'git rev-parse --short HEAD', returnStdout: true).trim()
-                    IS_TEST_ENABLED = sh(script: 'jq .test.enabled .pipelines/pipeline.json', returnStdout: true).toBoolean()
-                    GIT_BRANCH_NAME = sh(script: 'echo $GIT_BRANCH', returnStdout: true).trim()
-                    env.BUILD_TAG = BUILD_TAG
-                    env.IS_TEST_ENABLED = IS_TEST_ENABLED
-                    env.GIT_BRANCH_NAME = GIT_BRANCH_NAME
-                }
-            }
-        }
         stage('Custom') {
             steps {
 
@@ -26,14 +13,14 @@ pipeline {
                 }
             }
         }
-        stage('Set Build Details'){
-             steps {
-                script {
-                    currentBuild.displayName = "${BUILD_TAG}"
-                    currentBuild.description = "${BUILD_TAG}"
+        stage('Linting'){
+            steps{
+                script{
+                    sh "flake8 src/model"
+                
                 }
             }
-         }
+        }
         
     
         
