@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker { 
-	        image nabiakar/mslearn-jenkins:latest 
+	        image 'nabiakar/mslearn-jenkins:latest' 
 	    }
     }
     stages {
