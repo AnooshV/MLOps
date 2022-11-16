@@ -31,7 +31,13 @@ pipeline {
                 '''
             }
         }
-        
+        stage('Run job'){
+            steps{
+                sh '''
+                az ml job create --file src/job.yml --resource-group "adas-datapipeline-poc" --workspace-name "av-mlops-common-workspace"
+                '''
+            }
+        }
         
     
         
