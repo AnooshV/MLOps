@@ -31,14 +31,24 @@ pipeline {
                 '''
             }
         }
-        stage('Run job'){
+        stage('Training using development data'){
             steps{
                 sh '''
-                az ml job create --file src/job.yml --resource-group "adas-datapipeline-poc" --workspace-name "av-mlops-common-workspace"
+                az ml job create --file src/job.yml --resource-group "adas-datapipeline-poc" --workspace-name "av-mlops-common-workspace " --stream 
                 '''
             }
         }
-        
+        stage('Training using production data'){
+            input{
+                message "Do you want to proceed for production training?"
+            }
+
+            steps{
+                sh '''
+                az ml job create --file src/job.yml --resource-group "adas-datapipeline-poc" --workspace-name "av-mlops-common-workspace" --stream
+                '''
+            }
+        }
     
         
      }
