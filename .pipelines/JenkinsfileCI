@@ -24,6 +24,13 @@ pipeline {
                     '''
             }
         }
+        stage('Login to Azure'){
+            steps{
+                sh '''
+                az login --service-principal -u $app_id -p $password --tenant $tennant_id
+                '''
+            }
+        }
         
         
     
