@@ -5,7 +5,8 @@ import pytest
 
 def test_csvs_no_files():
     with pytest.raises(RuntimeError) as error:
-        get_csvs_df("./")
+        get_csvs_df("./")       
+        # ./ is the crrect path
     assert error.match("No CSV files found in provided data")
 
 

@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker { 
+	        image nabiakar/mslearn-jenkins:latest 
+	    }
+    }
     stages {
         stage('Calculate Git Hash'){
             steps {
