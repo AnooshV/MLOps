@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker { 
-	        image 'nabiakar/mslearn-jenkins:latest' 
-	    }
-    }
+    agent any
     stages {
         stage('Custom') {
             steps {
@@ -13,14 +9,22 @@ pipeline {
                 }
             }
         }
-        stage('Linting'){
+        stage('Build'){
             steps{
-                script{
-                    sh "flake8 src/model"
-                
-                }
+                sh '''
+                        chmod +x -R .pipelines/stages
+                        .pipelines/stages/build.sh
+                    '''
             }
         }
+        stage('Test'){
+            steps{
+                sh '''
+                        .pipelines/stages/test.sh
+                    '''
+            }
+        }
+        
         
     
         

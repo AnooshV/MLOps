@@ -1,6 +1,6 @@
 {
     "application": {
-      "name": "av-mlops-tutorial",
+      "name": "mslearn-endtoend",
       "type": "python"
     },
     "build": {
