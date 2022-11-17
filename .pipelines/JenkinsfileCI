@@ -49,7 +49,21 @@ pipeline {
                 '''
             }
         }
-    
+        stage('Training using production deployment'){
+            input{
+                message "Do you want to proceed for production deployment?"
+            }
+
+            steps{
+                sh '''
+                az configure --defaults workspace="av-mlops-common-workspace" group="adas-datapipeline-poc"
+                az ml online-endpoint update --name "anoosh-endpoint" -f src/model/endpoint.yml
+                JOB_NAME=$(az ml job list --query "[?experiment_name == 'dev-experiment'].name | [0]" | tr -d '"')
+                az ml model create --name "anoosh-model" --type "mlflow_model" --path "azureml://jobs/$JOB_NAME/outputs/artifacts/model"
+                az ml online-deployment update --name anoosh-deployment --endpoint "anoosh-endpoint" -f src/anoosh-deployment.yml
+                '''
+            }
+        }
         
      }
      post {

@@ -1,0 +1,6 @@
+$schema: https://azuremlschemas.azureedge.net/latest/managedOnlineDeployment.schema.json
+name: anoosh-deployment
+endpoint_name: anoosh-endpoint
+model: azureml:anoosh-model@latest
+instance_type: Standard_DS2_v2
+instance_count: 1
