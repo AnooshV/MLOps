@@ -1,0 +1,33 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: training_pipeline
+experiment_name: dev-experiment
+description: For diabetes
+compute: ml-ops-cpu-compute-cluster
+jobs:
+  hello_job:
+    command: echo "hello"
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
+    compute: ml-ops-cpu-compute-cluster
+  training_job:
+    code: ./model
+    command: >-
+      python train.py
+      --training_data ${{inputs.training_data}}
+      --reg_rate ${{inputs.reg_rate}}
+    inputs:
+      training_data: 
+        type: uri_folder 
+        path: azureml:diabetes-dev:1
+      reg_rate: 0.01
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
+    compute: ml-ops-cpu-compute-cluster
+    outputs:
+      training_output:
+        type: uri_file
+  listing_job:
+    inputs: 
+      training_input: ${{parent.jobs.training_job.outputs.training_output}}
+    command: echo "hi"
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
+    
